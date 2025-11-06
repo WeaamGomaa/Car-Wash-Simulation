@@ -36,15 +36,43 @@ class Car extends Thread{
 }
 
 class Pump extends Thread{
+    private Queue<Car> waitingQueue;
+    private Semaphore empty;
+    private Semaphore full;
+    private Semaphore mutex;
+    private int pumpId;
     //Implement this constructor
     public Pump(Queue<Car> waitingQueue, Semaphore empty, Semaphore full,
                 Semaphore mutex, int pumpId){
         //Initialize all fields
+        this.waitingQueue = waitingQueue;
+        this.empty = empty;
+        this.full = full;
+        this.mutex = mutex;
+        this.pumpId = pumpId;
     }
-
     //Implement the consumer logic
     public void run(){
-
+        while (true){
+            try {
+                full.acquire();
+                mutex.acquire();
+                Car car = waitingQueue.poll();
+                if (car != null){
+                    System.out.println("Pump " + pumpId + ": " + car.carId + " login ");
+                }
+                mutex.release();
+                empty.release();
+                if (car != null){
+                    System.out.println("Pump " + pumpId + ": " + car.carId + " begins service at Bay " + pumpId);
+                    Thread.sleep(3000);
+                    System.out.println("Pump " + pumpId + ": " + car.carId + " finishes service ");
+                    System.out.println("Pump " + pumpId + ": Bay " + pumpId + " is now free ");
+                }
+            }catch (InterruptedException e){
+                e.printStackTrace();
+            }
+        }
     }
 }
 
