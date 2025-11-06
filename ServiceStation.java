@@ -8,15 +8,30 @@ class Semaphore{
 }
 
 class Car extends Thread{
+    String carId;
+    Queue<Car> waitingQueue;
+    Semaphore empty;
+    Semaphore full;
+    Semaphore mutex;
+
     //Implement this constructor
     public Car(Queue<Car> waitingQueue, Semaphore empty, Semaphore full,
                Semaphore mutex, String carId){
-        //Initialize all fields
+        this.carId = carId;
+        this.waitingQueue = waitingQueue;
+        this.empty = empty;
+        this.full = full;
+        this.mutex = mutex;
     }
 
-    //Implement the consumer logic
+    //Implement the producer logic
     public void run(){
-
+        empty.acquire();
+        mutex.acquire();
+        waitingQueue.add(this);
+        System.out.println(carId + " arrived");
+        mutex.release();
+        full.release();
     }
 }
 
@@ -27,7 +42,7 @@ class Pump extends Thread{
         //Initialize all fields
     }
 
-    //Implement the producer logic
+    //Implement the consumer logic
     public void run(){
 
     }
