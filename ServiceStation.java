@@ -1,10 +1,26 @@
 import java.util.*;
 
 class Semaphore{
-    Semaphore(int sem){
+    private int value;
 
+    Semaphore(int val){
+        this.value = val;
     }
 
+    public synchronized void acquire() {
+        while (value <= 0) {
+            try {
+                wait();
+            }
+            catch (InterruptedException e) {}
+        }
+        value--;
+    }
+
+    public synchronized void release() {
+        value++;
+        notify();
+    }
 }
 
 class Car extends Thread{
