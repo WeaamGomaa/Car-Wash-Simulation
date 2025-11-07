@@ -2,7 +2,7 @@ import java.util.*;
 import javax.swing.*;
 import java.awt.*;
 import java.text.SimpleDateFormat;
-// Semaphore class 
+// Semaphore class
 class Semaphore{
     private int value;
 
@@ -25,7 +25,7 @@ class Semaphore{
         notify();
     }
 }
-// Car class 
+// Car class
 class Car extends Thread{
     String carId;
     Queue<Car> waitingQueue;
@@ -75,10 +75,10 @@ class Pump extends Thread{
         this.full = full;
         this.mutex = mutex;
         this.pumpId = pumpId;
-        this.gui = gui;   
+        this.gui = gui;
     }
-    public void stopPump() { 
-        running = false; 
+    public void stopPump() {
+        running = false;
     }
     //Implement the consumer logic
     public void run(){
@@ -88,16 +88,18 @@ class Pump extends Thread{
                 mutex.acquire();
                 Car car = waitingQueue.poll();
                 if (car != null){
-                    System.out.println("Pump " + pumpId + ": " + car.carId + " login ");
+                    gui.addLog("Pump " + pumpId + ": " + car.carId + " login ");
                 }
                 mutex.release();
                 empty.release();
                 if (car != null){
                     gui.setPumpStatus(pumpId - 1, true, car.carId);
-                    gui.addLog("Pump " + pumpId + " is washing " + car.carId + "...");
+                    gui.addLog("Pump " + pumpId +" : " + car.carId + " begins service at Bay " + pumpId );
                     Thread.sleep(3000);
                     gui.setPumpStatus(pumpId - 1, false, car.carId);
                     gui.addLog(" Pump " + pumpId + " finished " + car.carId);
+                    gui.addLog( "Pump "+ pumpId +" : Bay " + pumpId + " is now free ");
+                    gui.updateQueueDisplay();
                     gui.incrementProcessed();
                 }
             }catch (InterruptedException e){
@@ -180,7 +182,7 @@ class CarWashGUI extends JFrame {
         queuePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 8));
         queuePanel.setBackground(new Color(255, 250, 205));
         queuePanel.setBorder(BorderFactory.createTitledBorder("Waiting Queue"));
-        queuePanel.setPreferredSize(new Dimension(1000, 100)); 
+        queuePanel.setPreferredSize(new Dimension(1000, 100));
         center.add(queuePanel, BorderLayout.SOUTH);
 
         // Log (separate, on the right)
@@ -340,7 +342,7 @@ class CarWashGUI extends JFrame {
     }
 }
 
-// Main class 
+// Main class
 public class ServiceStation {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(CarWashGUI::new);
