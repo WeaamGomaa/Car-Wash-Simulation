@@ -1,4 +1,4 @@
-# 🚗 Raghwa Wash Simulation
+# 🚗 Raghwa - Car Wash Simulation
 
 A Java Swing application demonstrating the classic **Producer-Consumer synchronization problem** using semaphores and bounded buffers, simulating a busy car wash station.
 
